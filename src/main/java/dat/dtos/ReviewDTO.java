@@ -1,14 +1,16 @@
 package dat.dtos;
 
 import dat.entities.Review;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class ReviewDTO {
     private Integer id; // Unique identifier for the review
     private Integer destinationId; // ID of the associated destination

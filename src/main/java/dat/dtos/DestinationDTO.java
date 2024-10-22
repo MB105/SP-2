@@ -1,14 +1,16 @@
 package dat.dtos;
 
 import dat.entities.Destination;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Getter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class DestinationDTO {
     private Integer id; // Assuming this is the primary key
     private String city;
