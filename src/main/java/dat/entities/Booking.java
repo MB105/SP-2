@@ -2,7 +2,7 @@ package dat.entities;
 
 import dat.dtos.BookingDTO;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 
-@Getter
+@Data
 @NoArgsConstructor
 @Entity
 @Table(name = "booking")
@@ -47,6 +47,7 @@ public class Booking {
     @Column(name = "status", nullable = false)
     private BookingStatus status;
 
+    // Constructor that does not set ID when creating a new booking
     public Booking(int bookingId, Destination destination, LocalDateTime departureDate, LocalDateTime arrivalDate, LocalDate bookingDate, BookingStatus status) {
         this.bookingId = bookingId;
         this.destination = destination;
@@ -56,9 +57,8 @@ public class Booking {
         this.status = status;
     }
 
-    // Conversion constructor
+    // Conversion constructor should not set the ID for new bookings
     public Booking(BookingDTO bookingDTO, Destination destination) {
-        this.id = bookingDTO.getId();
         this.bookingId = bookingDTO.getBookingId();
         this.destination = destination; // Use the destination passed from the DTO
         this.departureDate = bookingDTO.getDepartureDate();
@@ -69,14 +69,34 @@ public class Booking {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o) return true; // Same object
+        if (o == null || getClass() != o.getClass()) return false; // Different class or null
+
         Booking booking = (Booking) o;
-        return id == booking.id && bookingId == booking.bookingId && Objects.equals(destination, booking.destination);
+
+        // Check if ID is set and equals, else compare based on other fields
+        if (id != 0 && booking.id != 0) {
+            return id == booking.id; // Compare IDs if they are both set
+        }
+
+        // If IDs are not set (for new bookings), compare other fields
+        return bookingId == booking.bookingId &&
+                Objects.equals(destination, booking.destination) &&
+                Objects.equals(departureDate, booking.departureDate) &&
+                Objects.equals(arrivalDate, booking.arrivalDate) &&
+                Objects.equals(bookingDate, booking.bookingDate) &&
+                Objects.equals(status, booking.status);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, bookingId, destination);
+        // If the ID is set, use it for hash code calculation; otherwise, use other fields
+        if (id != 0) {
+            return Objects.hash(id);
+        }
+
+        return Objects.hash(bookingId, destination, departureDate, arrivalDate, bookingDate, status);
     }
 }
+
+

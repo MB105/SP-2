@@ -2,7 +2,7 @@ package dat.entities;
 
 import dat.dtos.DestinationDTO;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
@@ -10,7 +10,7 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 
-@Getter
+@Data
 @NoArgsConstructor
 @Entity
 @Table(name = "destination")

@@ -2,13 +2,13 @@ package dat.entities;
 
 import dat.dtos.ReviewDTO;
 import jakarta.persistence.*;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Objects;
 
-@Getter
+@Data
 @NoArgsConstructor
 @Entity
 @Table(name = "review")

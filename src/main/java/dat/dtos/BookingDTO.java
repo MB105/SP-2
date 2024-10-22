@@ -2,16 +2,19 @@ package dat.dtos;
 
 import dat.entities.Booking;
 import dat.entities.BookingStatus;
-import lombok.Getter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
-@Getter
+@Data
 @NoArgsConstructor
+@AllArgsConstructor
 public class BookingDTO {
     private Integer id; // Assuming Booking entity now has this as primary key
     private int bookingId;
@@ -37,14 +40,29 @@ public class BookingDTO {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof BookingDTO bookingDTO)) return false;
+        if (this == o) return true; // Same object
+        if (!(o instanceof BookingDTO bookingDTO)) return false; // Different class
 
-        return getId().equals(bookingDTO.getId());
+        // If the ID is set, compare IDs; otherwise, compare based on other fields
+        if (id != null) {
+            return id.equals(bookingDTO.id);
+        }
+
+        return bookingId == bookingDTO.bookingId &&
+                destinationId == bookingDTO.destinationId &&
+                Objects.equals(departureDate, bookingDTO.departureDate) &&
+                Objects.equals(arrivalDate, bookingDTO.arrivalDate) &&
+                Objects.equals(bookingDate, bookingDTO.bookingDate) &&
+                Objects.equals(status, bookingDTO.status);
     }
 
     @Override
     public int hashCode() {
-        return getId().hashCode();
+        // Use ID for hash code if set; otherwise, use other significant fields
+        if (id != null) {
+            return id.hashCode();
+        }
+
+        return Objects.hash(bookingId, destinationId, departureDate, arrivalDate, bookingDate, status);
     }
 }
