@@ -2,6 +2,7 @@ package dat.controllers.impl;
 
 import dat.config.HibernateConfig;
 import dat.controllers.IController;
+import dat.daos.impl.BookingDAO;
 import dat.dtos.BookingDTO;
 import dat.entities.BookingStatus;
 import dat.exceptions.Message;
