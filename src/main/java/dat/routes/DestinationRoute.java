@@ -13,11 +13,11 @@ public class DestinationRoute {
     protected EndpointGroup getRoutes() {
 
         return () -> {
-            post("/", destinationController::create, Role.USER);
+            post("/", destinationController::create, Role.ADMIN);
             get("/", destinationController::readAll);
             get("/{id}", destinationController::read);
-            put("/{id}", destinationController::update);
-            delete("/{id}", destinationController::delete);
+            put("/{id}", destinationController::update, Role.ADMIN);
+            delete("/{id}", destinationController::delete, Role.ADMIN);
         };
     }
 }

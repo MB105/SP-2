@@ -2,6 +2,7 @@ package dat.controllers.impl;
 
 import dat.config.HibernateConfig;
 import dat.controllers.IController;
+import dat.daos.impl.ReviewDAO;
 import dat.dtos.ReviewDTO;
 import dat.exceptions.Message;
 import io.javalin.http.Context;
@@ -92,7 +93,7 @@ public class ReviewController implements IController<ReviewDTO, Integer> {
         return ctx.bodyValidator(ReviewDTO.class)
                 .check(r -> r.getComment() != null && !r.getComment().isEmpty(), "Review comment must be set")
                 .check(r -> r.getRating() >= 1 && r.getRating() <= 5, "Rating must be between 1 and 5")
-                .check(r -> r.getUserId() > 0, "Valid user ID must be provided")
+                .check(r -> r.getId() > 0, "Valid user ID must be provided")
                 .check(r -> r.getDestinationId() > 0, "Valid destination ID must be provided")
                 .get();
     }

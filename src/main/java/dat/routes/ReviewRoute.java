@@ -17,7 +17,7 @@ public class ReviewRoute {
             post("/", reviewController::create, Role.USER);
             get("/", reviewController::readAll);
             get("/{id}", reviewController::read);
-            delete("/{id}", reviewController::delete);
+            delete("/{id}", reviewController::delete,Role.ADMIN);
         };
     }
 }

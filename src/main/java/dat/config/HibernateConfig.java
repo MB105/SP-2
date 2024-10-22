@@ -45,7 +45,6 @@ public class HibernateConfig {
         configuration.addAnnotatedClass(Booking.class);
         configuration.addAnnotatedClass(Destination.class);
         configuration.addAnnotatedClass(Review.class);
-        configuration.addAnnotatedClass(User.class);
 
         //Security
         configuration.addAnnotatedClass(User.class);
