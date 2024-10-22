@@ -2,7 +2,6 @@ package dat.controllers.impl;
 
 import dat.config.HibernateConfig;
 import dat.controllers.IController;
-import dat.daos.impl.ReviewDAO;
 import dat.dtos.ReviewDTO;
 import dat.exceptions.Message;
 import io.javalin.http.Context;
