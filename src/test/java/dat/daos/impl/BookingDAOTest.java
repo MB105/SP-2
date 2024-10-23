@@ -1,7 +1,6 @@
 package dat.daos.impl;
 
 import dat.config.HibernateConfig;
-import dat.config.Populate;
 import dat.dtos.BookingDTO;
 import dat.entities.BookingStatus;
 import jakarta.persistence.EntityManager;
@@ -34,7 +33,7 @@ public class BookingDAOTest {
         // Populate initial data
         EntityManager em = emf.createEntityManager();
         em.getTransaction().begin();
-        Populate.main(new String[0]);
+       // Populate.main(new String[0]);
         em.getTransaction().commit();
         em.close();
     }
