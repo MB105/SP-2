@@ -13,6 +13,7 @@ import java.util.List;
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class DestinationDAO implements IDAO<DestinationDTO, Integer> {
 
+
     private static DestinationDAO instance;
     private static EntityManagerFactory emf;
 

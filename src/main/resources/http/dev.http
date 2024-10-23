@@ -1,6 +1,7 @@
 ### A simple get request to the test endpoint. No need for login
 GET {{url}}/auth/test/
 
+// Login enten med user eller admin
 
 ### Create a new user - this one will only get a USER role by default
 POST {{url}}/auth/register/
@@ -57,6 +58,9 @@ Authorization: Bearer {{jwt_token}}
 Accept: application/json
 Authorization: Bearer {{jwt_token}}
 
+###
+
+//Destination
 
 ###
 GET {{url}}/destinations
@@ -89,7 +93,7 @@ Authorization: Bearer {{jwt_token}}
 
 ###
 
-PUT {{url}}/destinations/2
+PUT {{url}}/destinations/4
 Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
 
@@ -100,16 +104,22 @@ Authorization: Bearer {{jwt_token}}
 
 ###
 
-DELETE {{url}}/destinations/2
+DELETE {{url}}/destinations/5
 Authorization: Bearer {{jwt_token}}
 
+###
+
+
+//Bookings
 
 ###
 GET {{url}}/bookings
+Authorization: Bearer {{jwt_token}}
 
 ###
 
-GET {{url}}/bookings/1
+GET {{url}}/bookings/4
+Authorization: Bearer {{jwt_token}}
 
 ###
 
@@ -118,7 +128,7 @@ Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
 
 {
-  "destinationCity": "Stuttgart",
+  "destinationCity": "Tangier",
   "departureDate": "2024-12-03T10:15:30",
   "arrivalDate": "2024-12-04T10:16:30",
   "bookingDate": "2024-02-02",
@@ -127,42 +137,81 @@ Authorization: Bearer {{jwt_token}}
 
 ###
 
-PUT {{url}}/bookings/1
+POST {{url}}/bookings
 Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
 
 {
-  "destinationCity": "",
+  "destinationCity": "Copenhagen",
   "departureDate": "2024-12-03T10:15:30",
   "arrivalDate": "2024-12-04T10:16:30",
-  "bookingDate": "2024-02-02",
-  "status": "PENDING"
+  "bookingDate": "2024-03-03",
+  "status": "CONFIRMED"
 }
 
 ###
 
-DELETE {{url}}/destinations/2
+PUT {{url}}/bookings/4
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "destinationCity": "Tangier",
+  "departureDate": "2024-12-03T10:15:30",
+  "arrivalDate": "2024-12-04T10:16:30",
+  "bookingDate": "2024-02-02",
+  "status": "CANCELLED"
+}
+
+###
+
+DELETE {{url}}/bookings/4
 Authorization: Bearer {{jwt_token}}
 
 
+###
 
+
+//Anmeldelse (review)
+
+###
+GET {{url}}/reviews
+Authorization: Bearer {{jwt_token}}
 
 ###
 
-// Room API
-
-GET {{url}}/rooms
-
-###
-
-GET {{url}}/rooms/1
+GET {{url}}/reviews/1
+Authorization: Bearer {{jwt_token}}
 
 ###
 
-POST {{url}}/rooms/hotel/3
+POST {{url}}/reviews
 Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
 
 {
-  "roomNumber": 11,
-  "roomPrice": 1150,
-  "roomType": "SINGLE"
+  "destinationId": 4,
+  "rating": 5,
+  "comment": "Great experience!"
 }
+
+###
+
+POST {{url}}/reviews
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "destinationId": 2,
+  "rating": 5,
+  "comment": "god oplevelse"
+}
+
+###
+
+DELETE {{url}}/reviews/6
+Authorization: Bearer {{jwt_token}}
+
+###
+
+
