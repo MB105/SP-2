@@ -1,6 +1,7 @@
 package dat.daos.impl;
 
 import dat.config.HibernateConfig;
+import dat.config.Populate;
 import dat.dtos.BookingDTO;
 import dat.entities.BookingStatus;
 import jakarta.persistence.EntityManager;
@@ -12,12 +13,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
-@Disabled
+
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BookingDAOTest {
 
-    private static BookingDAO bookingDAO;
-    private static EntityManagerFactory emf;
+    private BookingDAO bookingDAO;
+    private EntityManagerFactory emf;
 
     @BeforeAll
     void setup() {
@@ -31,17 +32,16 @@ public class BookingDAOTest {
         bookingDAO = BookingDAO.getInstance(emf);
 
         // Populate initial data
-        EntityManager em = emf.createEntityManager();
-        em.getTransaction().begin();
-       // Populate.main(new String[0]);
-        em.getTransaction().commit();
-        em.close();
+        try (EntityManager em = emf.createEntityManager()) {
+            em.getTransaction().begin();
+            Populate.main(new String[0]); // Ensure that this populates data correctly
+            em.getTransaction().commit();
+        }
     }
-/*
+
     @Test
     void create() {
         BookingDTO bookingDTO = new BookingDTO();
-        bookingDTO.setBookingId(4); // Ensure unique booking ID
         bookingDTO.setDestinationId(1); // Assuming destination ID 1 exists
         bookingDTO.setDepartureDate(LocalDateTime.now().plusDays(1));
         bookingDTO.setArrivalDate(LocalDateTime.now().plusDays(4));
@@ -50,13 +50,11 @@ public class BookingDAOTest {
 
         BookingDTO createdBooking = bookingDAO.create(bookingDTO);
         assertNotNull(createdBooking);
-        assertNotNull(createdBooking.getBookingId());
+        assertNotNull(createdBooking.getId()); // Changed to getId() if ID is now just id
         assertEquals(bookingDTO.getDestinationId(), createdBooking.getDestinationId());
         assertEquals(bookingDTO.getStatus(), createdBooking.getStatus());
     }
 
-
- */
     @Test
     void read() {
         BookingDTO booking = bookingDAO.read(1);  // Assuming ID 1 exists
@@ -90,7 +88,6 @@ public class BookingDAOTest {
         assertEquals(2, updatedBooking.getDestinationId()); // Verify the updated destination ID
     }
 
-
     @Test
     void delete() {
         // First, read the existing booking to verify it exists
@@ -98,10 +95,10 @@ public class BookingDAOTest {
         assertNotNull(booking); // Ensure the booking exists before deletion
 
         // Delete the booking
-        bookingDAO.delete(1); // Call the delete method with the booking ID
+        bookingDAO.delete(booking.getId()); // Call the delete method with the booking ID
 
         // Verify the booking has been deleted
-        BookingDTO deletedBooking = bookingDAO.read(1);
+        BookingDTO deletedBooking = bookingDAO.read(booking.getId());
         assertNull(deletedBooking); // Ensure the booking is null after deletion
     }
 
@@ -114,13 +111,18 @@ public class BookingDAOTest {
     @AfterAll
     public void cleanUp() {
         // Cleanup to ensure no test pollution
-        try (var em = emf.createEntityManager()) {
+        try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
             em.createQuery("DELETE FROM Booking").executeUpdate();
+            em.createQuery("DELETE FROM Destination").executeUpdate(); // Add this if you want to clear destinations too
             em.createNativeQuery("ALTER SEQUENCE booking_id_seq RESTART WITH 1").executeUpdate();
             em.getTransaction().commit();
         } catch (Exception e) {
             e.printStackTrace(); // Logs any exceptions that occur
+        } finally {
+            if (emf != null) {
+                emf.close(); // Close EntityManagerFactory after all tests are done
+            }
         }
     }
 }
