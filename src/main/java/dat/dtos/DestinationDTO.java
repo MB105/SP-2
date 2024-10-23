@@ -19,9 +19,10 @@ public class DestinationDTO {
 
     public DestinationDTO(Destination destination) {
         if (destination != null) { // Ensure destination is not null
-            this.id = destination.getId();
+            this.id = destination.getId() != null ? destination.getId() : null;
             this.city = destination.getCity();
             this.country = destination.getCountry();
+
         }
     }
 
