@@ -39,7 +39,7 @@ public class Destination {
 
     // Conversion constructor
     public Destination(DestinationDTO destinationDTO) {
-        this.id = destinationDTO.getId();
+        //this.id = destinationDTO.getId();
         this.city = destinationDTO.getCity();
         this.country = destinationDTO.getCountry();
     }

@@ -1,6 +1,7 @@
 ### A simple get request to the test endpoint. No need for login
 GET {{url}}/auth/test/
 
+
 ### Create a new user - this one will only get a USER role by default
 POST {{url}}/auth/register/
 
@@ -9,7 +10,7 @@ POST {{url}}/auth/register/
     "password": "test123"
 }
 
-###
+### Login USER role
 POST {{url}}/auth/login/
 
 {
@@ -22,15 +23,28 @@ POST {{url}}/auth/login/
     console.log("JWT Token:", client.global.get("jwt_token"));
 %}
 
-###
-GET {{url}}/protected/user_demo/
-Accept: application/json
-Authorization: Bearer {{jwt_token}}
+### Create a new user - ADMIN role
+POST {{url}}/auth/register/
 
-###
-GET {{url}}/protected/admin_demo/
-Accept: application/json
-Authorization: Bearer {{jwt_token}}
+{
+    "username": "admin",
+    "password": "test123"
+}
+
+
+### Login ADMIN role
+POST {{url}}/auth/login/
+
+{
+    "username": "admin",
+    "password": "test123"
+}
+
+> {%
+    client.global.set("jwt_token", response.body.token);
+    console.log("JWT Token:", client.global.get("jwt_token"));
+%}
+
 
 ### Add admin role to user
 POST {{url}}/auth/user/addrole/
@@ -38,43 +52,112 @@ Accept: application/json
 Authorization: Bearer {{jwt_token}}
 
 {
-    "role": "superman"
+    "role": "ADMIN"
 }
 Accept: application/json
 Authorization: Bearer {{jwt_token}}
 
-###
-GET {{url}}/hotels
 
 ###
-
-GET {{url}}/hotels/2
+GET {{url}}/destinations
 
 ###
 
-POST {{url}}/hotels
+GET {{url}}/destinations/1
+
+###
+
+POST {{url}}/destinations
 Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
 
 {
-  "hotelName": "Holiday Inn",
-  "hotelAddress": "Stuttgart",
-  "hotelType": "STANDARD"
+  "city": "Stuttgart",
+  "country": "Germany"
 }
 
 ###
 
-PUT {{url}}/hotels/3
+POST {{url}}/destinations
 Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
 
 {
-  "hotelName": "Ritz Carlton",
-  "hotelAddress": "London City",
-  "hotelType": "LUXURY"
+  "city": "Copenhagen",
+  "country": "Denmark"
 }
 
 ###
 
-DELETE {{url}}/hotels/5
+PUT {{url}}/destinations/2
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "city": "Tangier",
+  "country": "Marocco"
+}
+
+###
+
+DELETE {{url}}/destinations/2
+Authorization: Bearer {{jwt_token}}
+
+
+
+
+
+
+###
+GET {{url}}/bookings
+
+###
+
+GET {{url}}/bookings/1
+
+###
+
+POST {{url}}/bookings
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "destinationId": "getDestination",
+  "departureDate": "2024-12-03T10:15:30",
+  "arrivalDate": "2024-13-03T10:16:30",
+  "bookingDate": "2024-02-02",
+  "status": "PENDING"
+}
+
+###
+
+POST {{url}}/destinations
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "city": "Copenhagen",
+  "country": "Denmark"
+}
+
+###
+
+PUT {{url}}/destinations/2
+Content-Type: application/json
+Authorization: Bearer {{jwt_token}}
+
+{
+  "city": "Tangier",
+  "country": "Marocco"
+}
+
+###
+
+DELETE {{url}}/destinations/2
+Authorization: Bearer {{jwt_token}}
+
+
+
 
 ###
 

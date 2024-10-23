@@ -22,10 +22,6 @@ public class Booking {
     private int id;
 
     @Setter
-    @Column(name = "booking_id", nullable = false)
-    private int bookingId;
-
-    @Setter
     @ManyToOne
     @JoinColumn(name = "destination_id", nullable = false)
     private Destination destination;
@@ -48,8 +44,7 @@ public class Booking {
     private BookingStatus status;
 
     // Constructor that does not set ID when creating a new booking
-    public Booking(int bookingId, Destination destination, LocalDateTime departureDate, LocalDateTime arrivalDate, LocalDate bookingDate, BookingStatus status) {
-        this.bookingId = bookingId;
+    public Booking(Destination destination, LocalDateTime departureDate, LocalDateTime arrivalDate, LocalDate bookingDate, BookingStatus status) {
         this.destination = destination;
         this.departureDate = departureDate;
         this.arrivalDate = arrivalDate;
@@ -59,7 +54,6 @@ public class Booking {
 
     // Conversion constructor should not set the ID for new bookings
     public Booking(BookingDTO bookingDTO, Destination destination) {
-        this.bookingId = bookingDTO.getBookingId();
         this.destination = destination; // Use the destination passed from the DTO
         this.departureDate = bookingDTO.getDepartureDate();
         this.arrivalDate = bookingDTO.getArrivalDate();
@@ -80,7 +74,7 @@ public class Booking {
         }
 
         // If IDs are not set (for new bookings), compare other fields
-        return bookingId == booking.bookingId &&
+        return id == booking.id &&
                 Objects.equals(destination, booking.destination) &&
                 Objects.equals(departureDate, booking.departureDate) &&
                 Objects.equals(arrivalDate, booking.arrivalDate) &&
@@ -95,7 +89,7 @@ public class Booking {
             return Objects.hash(id);
         }
 
-        return Objects.hash(bookingId, destination, departureDate, arrivalDate, bookingDate, status);
+        return Objects.hash(id, destination, departureDate, arrivalDate, bookingDate, status);
     }
 }
 

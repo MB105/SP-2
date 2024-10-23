@@ -69,7 +69,6 @@ public class BookingDAO implements IDAO<BookingDTO, Integer> {
             if (booking != null) {
                 Destination destination = em.find(Destination.class, bookingDTO.getDestinationId());
                 if (destination != null) {
-                    booking.setBookingId(bookingDTO.getBookingId());
                     booking.setDestination(destination);
                     booking.setDepartureDate(bookingDTO.getDepartureDate());
                     booking.setArrivalDate(bookingDTO.getArrivalDate());
