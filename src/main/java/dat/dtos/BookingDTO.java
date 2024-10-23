@@ -17,7 +17,8 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class BookingDTO {
     private Integer id; // Assuming Booking entity now has this as primary key
-    private Integer destinationId; // Assuming this is the ID of the destination booked
+    private int destinationId; // Assuming this is the ID of the destination booked
+
     private String destinationCity;
     private LocalDateTime departureDate;
     private LocalDateTime arrivalDate;
@@ -25,7 +26,9 @@ public class BookingDTO {
     private BookingStatus status;
 
     public BookingDTO(Booking booking) {
-        this.destinationId = booking.getDestination() != null ? booking.getDestination().getId() : null; // Ensure destination is not null
+
+        //this.destinationId = booking.getDestination() != null ? booking.getDestination().getId() : null; // Ensure destination is not null
+
         this.destinationCity = booking.getDestination() != null ? booking.getDestination().getCity() : null;
         this.departureDate = booking.getDepartureDate();
         this.arrivalDate = booking.getArrivalDate();
