@@ -4,6 +4,7 @@ import dat.daos.IDAO;
 import dat.dtos.BookingDTO;
 import dat.entities.Booking;
 import dat.entities.Destination;
+import io.javalin.http.BadRequestResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.TypedQuery;
@@ -46,17 +47,23 @@ public class BookingDAO implements IDAO<BookingDTO, Integer> {
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
 
-            // Fetch the Destination based on the destinationId
-            Destination destination = em.find(Destination.class, bookingDTO.getDestinationId());
+            // Fetch the Destination based on the destination city name
+            TypedQuery<Destination> query = em.createQuery("SELECT d FROM Destination d WHERE d.city = :city", Destination.class);
+            query.setParameter("city", bookingDTO.getDestinationCity());
+            Destination destination = query.getResultStream().findFirst().orElse(null); // Handle case where city is not found
+
             if (destination == null) {
                 em.getTransaction().rollback();
-                return null; // Handle the case where the destination does not exist
+                return null; // Handle the case where the destination city does not exist
             }
 
             Booking booking = new Booking(bookingDTO, destination); // Pass the destination
             em.persist(booking);
             em.getTransaction().commit();
             return new BookingDTO(booking);
+        } catch (Exception e) {
+                e.printStackTrace();
+             throw new BadRequestResponse();
         }
     }
 
@@ -67,7 +74,7 @@ public class BookingDAO implements IDAO<BookingDTO, Integer> {
 
             Booking booking = em.find(Booking.class, bookingId);
             if (booking != null) {
-                Destination destination = em.find(Destination.class, bookingDTO.getDestinationId());
+                Destination destination = em.find(Destination.class, bookingDTO.getDestinationCity());
                 if (destination != null) {
                     booking.setDestination(destination);
                     booking.setDepartureDate(bookingDTO.getDepartureDate());

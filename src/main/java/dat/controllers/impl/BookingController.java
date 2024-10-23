@@ -104,11 +104,11 @@ public class BookingController implements IController<BookingDTO, Integer> {
     @Override
     public BookingDTO validateEntity(Context ctx) {
         return ctx.bodyValidator(BookingDTO.class)
-                .check(b -> b.getDestinationId() > 0, "Not a valid destination ID")
+                .check(b -> b.getDestinationCity() != null, "Not a valid destination city")
                 .check(b -> b.getDepartureDate() != null, "Not a valid departure date")
                 .check(b -> b.getArrivalDate() != null, "Not a valid arrival date")
                 .check(b -> b.getBookingDate() != null, "Not a valid booking date")
-                .check(b -> b.getStatus() != null && b.getStatus() instanceof BookingStatus, "Not a valid booking status")
+                .check(b -> b.getStatus() != null, "Not a valid booking status")
                 .get();
     }
 }

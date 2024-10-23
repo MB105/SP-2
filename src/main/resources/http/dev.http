@@ -104,10 +104,6 @@ DELETE {{url}}/destinations/2
 Authorization: Bearer {{jwt_token}}
 
 
-
-
-
-
 ###
 GET {{url}}/bookings
 
@@ -122,33 +118,24 @@ Content-Type: application/json
 Authorization: Bearer {{jwt_token}}
 
 {
-  "destinationId": "getDestination",
+  "destinationCity": "Stuttgart",
   "departureDate": "2024-12-03T10:15:30",
-  "arrivalDate": "2024-13-03T10:16:30",
+  "arrivalDate": "2024-12-04T10:16:30",
   "bookingDate": "2024-02-02",
   "status": "PENDING"
 }
 
 ###
 
-POST {{url}}/destinations
+PUT {{url}}/bookings/1
 Content-Type: application/json
-Authorization: Bearer {{jwt_token}}
 
 {
-  "city": "Copenhagen",
-  "country": "Denmark"
-}
-
-###
-
-PUT {{url}}/destinations/2
-Content-Type: application/json
-Authorization: Bearer {{jwt_token}}
-
-{
-  "city": "Tangier",
-  "country": "Marocco"
+  "destinationCity": "",
+  "departureDate": "2024-12-03T10:15:30",
+  "arrivalDate": "2024-12-04T10:16:30",
+  "bookingDate": "2024-02-02",
+  "status": "PENDING"
 }
 
 ###

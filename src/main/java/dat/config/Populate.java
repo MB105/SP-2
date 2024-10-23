@@ -90,7 +90,6 @@ public class Populate {
             }
 
             Booking booking = new Booking(
-                    bookingId++,
                     destination,
                     departureDate,
                     arrivalDate,

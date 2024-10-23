@@ -18,13 +18,15 @@ import java.util.stream.Collectors;
 public class BookingDTO {
     private Integer id; // Assuming Booking entity now has this as primary key
     private int destinationId; // Assuming this is the ID of the destination booked
+    private String destinationCity;
     private LocalDateTime departureDate;
     private LocalDateTime arrivalDate;
     private LocalDate bookingDate;
     private BookingStatus status;
 
     public BookingDTO(Booking booking) {
-        this.destinationId = booking.getDestination() != null ? booking.getDestination().getId() : null; // Ensure destination is not null
+        //this.destinationId = booking.getDestination() != null ? booking.getDestination().getId() : null; // Ensure destination is not null
+        this.destinationCity = booking.getDestination() != null ? booking.getDestination().getCity() : null;
         this.departureDate = booking.getDepartureDate();
         this.arrivalDate = booking.getArrivalDate();
         this.bookingDate = booking.getBookingDate();
@@ -46,7 +48,8 @@ public class BookingDTO {
         }
 
         return id == bookingDTO.id &&
-                destinationId == bookingDTO.destinationId &&
+                //destinationId == bookingDTO.destinationId &&
+                Objects.equals(destinationCity, bookingDTO.destinationCity) &&
                 Objects.equals(departureDate, bookingDTO.departureDate) &&
                 Objects.equals(arrivalDate, bookingDTO.arrivalDate) &&
                 Objects.equals(bookingDate, bookingDTO.bookingDate) &&
@@ -60,6 +63,6 @@ public class BookingDTO {
             return id.hashCode();
         }
 
-        return Objects.hash(id, destinationId, departureDate, arrivalDate, bookingDate, status);
+        return Objects.hash(id, destinationCity, departureDate, arrivalDate, bookingDate, status);
     }
 }
