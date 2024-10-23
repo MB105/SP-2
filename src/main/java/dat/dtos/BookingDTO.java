@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 public class BookingDTO {
     private Integer id; // Assuming Booking entity now has this as primary key
     private int destinationId; // Assuming this is the ID of the destination booked
+
     private String destinationCity;
     private LocalDateTime departureDate;
     private LocalDateTime arrivalDate;
@@ -25,12 +26,15 @@ public class BookingDTO {
     private BookingStatus status;
 
     public BookingDTO(Booking booking) {
+
         //this.destinationId = booking.getDestination() != null ? booking.getDestination().getId() : null; // Ensure destination is not null
+
         this.destinationCity = booking.getDestination() != null ? booking.getDestination().getCity() : null;
         this.departureDate = booking.getDepartureDate();
         this.arrivalDate = booking.getArrivalDate();
         this.bookingDate = booking.getBookingDate();
         this.status = booking.getStatus();
+        this.id = booking.getId() != null ? booking.getId() : null;
     }
 
     public static List<BookingDTO> toBookingDTOList(List<Booking> bookings) {

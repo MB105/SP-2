@@ -19,7 +19,7 @@ public class Destination {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    private int id;
+    private Integer id;
 
     @Setter
     @Column(name = "city", nullable = false)
@@ -39,7 +39,6 @@ public class Destination {
 
     // Conversion constructor
     public Destination(DestinationDTO destinationDTO) {
-        //this.id = destinationDTO.getId();
         this.city = destinationDTO.getCity();
         this.country = destinationDTO.getCountry();
     }

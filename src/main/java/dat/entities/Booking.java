@@ -19,7 +19,7 @@ public class Booking {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    private int id;
+    private Integer id;
 
     @Setter
     @ManyToOne
@@ -52,7 +52,7 @@ public class Booking {
         this.status = status;
     }
 
-    // Conversion constructor should not set the ID for new bookings
+    // Constructor that uses BookingDTO but does not set the ID
     public Booking(BookingDTO bookingDTO, Destination destination) {
         this.destination = destination; // Use the destination passed from the DTO
         this.departureDate = bookingDTO.getDepartureDate();
@@ -61,36 +61,22 @@ public class Booking {
         this.status = bookingDTO.getStatus();
     }
 
+    // Equals og hashCode metoder
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true; // Same object
-        if (o == null || getClass() != o.getClass()) return false; // Different class or null
-
-        Booking booking = (Booking) o;
-
-        // Check if ID is set and equals, else compare based on other fields
-        if (id != 0 && booking.id != 0) {
-            return id == booking.id; // Compare IDs if they are both set
-        }
-
-        // If IDs are not set (for new bookings), compare other fields
-        return id == booking.id &&
-                Objects.equals(destination, booking.destination) &&
-                Objects.equals(departureDate, booking.departureDate) &&
-                Objects.equals(arrivalDate, booking.arrivalDate) &&
-                Objects.equals(bookingDate, booking.bookingDate) &&
-                Objects.equals(status, booking.status);
+        if (this == o) return true; // Tjekker om de to objekter er identiske
+        if (o == null || getClass() != o.getClass()) return false; // Tjekker for null og klasse
+        Booking booking = (Booking) o; // Cast til Booking
+        return id == booking.id && // Sammenligner id
+                Objects.equals(destination, booking.destination) && // Sammenligner destination
+                Objects.equals(departureDate, booking.departureDate) && // Sammenligner afrejsedato
+                Objects.equals(arrivalDate, booking.arrivalDate) && // Sammenligner ankomstdato
+                Objects.equals(bookingDate, booking.bookingDate) && // Sammenligner bookings dato
+                Objects.equals(status, booking.status); // Sammenligner status
     }
 
     @Override
     public int hashCode() {
-        // If the ID is set, use it for hash code calculation; otherwise, use other fields
-        if (id != 0) {
-            return Objects.hash(id);
-        }
-
-        return Objects.hash(id, destination, departureDate, arrivalDate, bookingDate, status);
+        return Objects.hash(id, destination, departureDate, arrivalDate, bookingDate, status); // Genererer hashCode baseret på de relevante felter
     }
 }
-
-

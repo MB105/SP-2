@@ -28,6 +28,9 @@ public class BookingDAO implements IDAO<BookingDTO, Integer> {
 
     @Override
     public BookingDTO read(Integer bookingId) {
+        if (bookingId == null) {
+            throw new IllegalArgumentException("Booking ID cannot be null.");
+        }
         try (EntityManager em = emf.createEntityManager()) {
             Booking booking = em.find(Booking.class, bookingId);
             return booking != null ? new BookingDTO(booking) : null;
@@ -44,6 +47,10 @@ public class BookingDAO implements IDAO<BookingDTO, Integer> {
 
     @Override
     public BookingDTO create(BookingDTO bookingDTO) {
+        if (bookingDTO == null) {
+            throw new IllegalArgumentException("BookingDTO cannot be null.");
+        }
+
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
 
@@ -54,7 +61,11 @@ public class BookingDAO implements IDAO<BookingDTO, Integer> {
 
             if (destination == null) {
                 em.getTransaction().rollback();
+
                 return null; // Handle the case where the destination city does not exist
+
+                throw new BadRequestResponse("Destination not found.");
+
             }
 
             Booking booking = new Booking(bookingDTO, destination); // Pass the destination
@@ -62,19 +73,34 @@ public class BookingDAO implements IDAO<BookingDTO, Integer> {
             em.getTransaction().commit();
             return new BookingDTO(booking);
         } catch (Exception e) {
-                e.printStackTrace();
-             throw new BadRequestResponse();
+
+             
+            e.printStackTrace();
+            throw new BadRequestResponse("Error while creating booking: " + e.getMessage());
+
         }
     }
 
     @Override
     public BookingDTO update(Integer bookingId, BookingDTO bookingDTO) {
+        if (bookingId == null || bookingDTO == null) {
+            throw new IllegalArgumentException("Booking ID and BookingDTO cannot be null.");
+        }
+
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
 
             Booking booking = em.find(Booking.class, bookingId);
             if (booking != null) {
+
                 Destination destination = em.find(Destination.class, bookingDTO.getDestinationCity());
+
+                // Fetch destination by city
+                TypedQuery<Destination> destQuery = em.createQuery("SELECT d FROM Destination d WHERE d.city = :city", Destination.class);
+                destQuery.setParameter("city", bookingDTO.getDestinationCity());
+                Destination destination = destQuery.getResultStream().findFirst().orElse(null);
+
+
                 if (destination != null) {
                     booking.setDestination(destination);
                     booking.setDepartureDate(bookingDTO.getDepartureDate());
@@ -86,17 +112,23 @@ public class BookingDAO implements IDAO<BookingDTO, Integer> {
                 }
             }
             em.getTransaction().rollback();
-            return null; // Handle the case where the booking doesn't exist
+            throw new BadRequestResponse("Booking not found or invalid destination.");
         }
     }
 
     @Override
     public void delete(Integer bookingId) {
+        if (bookingId == null) {
+            throw new IllegalArgumentException("Booking ID cannot be null.");
+        }
+
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
             Booking booking = em.find(Booking.class, bookingId);
             if (booking != null) {
                 em.remove(booking);
+            } else {
+                throw new BadRequestResponse("Booking not found.");
             }
             em.getTransaction().commit();
         }
@@ -104,6 +136,10 @@ public class BookingDAO implements IDAO<BookingDTO, Integer> {
 
     @Override
     public boolean validatePrimaryKey(Integer bookingId) {
+        if (bookingId == null) {
+            throw new IllegalArgumentException("Booking ID cannot be null.");
+        }
+
         try (EntityManager em = emf.createEntityManager()) {
             Booking booking = em.find(Booking.class, bookingId);
             return booking != null;
