@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
@@ -17,9 +18,11 @@ public class DestinationDTO {
     private String country;
 
     public DestinationDTO(Destination destination) {
-        this.id = destination.getId();
-        this.city = destination.getCity();
-        this.country = destination.getCountry();
+        if (destination != null) { // Ensure destination is not null
+            this.id = destination.getId();
+            this.city = destination.getCity();
+            this.country = destination.getCountry();
+        }
     }
 
     public static List<DestinationDTO> toDestinationDTOList(List<Destination> destinations) {
@@ -31,11 +34,11 @@ public class DestinationDTO {
         if (this == o) return true;
         if (!(o instanceof DestinationDTO destinationDTO)) return false;
 
-        return getId().equals(destinationDTO.getId());
+        return Objects.equals(id, destinationDTO.id); // Use Objects.equals to prevent NullPointerException
     }
 
     @Override
     public int hashCode() {
-        return getId().hashCode();
+        return Objects.hash(id); // Use Objects.hash for null safety
     }
 }

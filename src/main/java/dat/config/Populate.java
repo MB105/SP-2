@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-
+/*
 public class Populate {
     public static void main(String[] args) {
         EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
@@ -102,6 +102,8 @@ public class Populate {
         return bookings;
     }
 
+
+
     @NotNull
     private static Set<Review> getReviews(Set<Destination> destinations) {
         Set<Review> reviews = new HashSet<>();
@@ -111,3 +113,5 @@ public class Populate {
         return reviews;
     }
 }
+
+ */
