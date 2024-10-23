@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Data
@@ -19,10 +20,12 @@ public class ReviewDTO {
 
     // Conversion constructor from Review entity
     public ReviewDTO(Review review) {
-        this.id = review.getId();
-        this.destinationId = review.getDestination().getId(); // Get destination ID from the associated Destination object
-        this.rating = review.getRating();
-        this.comment = review.getComment();
+        if (review != null) { // Ensure review is not null
+            this.id = review.getId();
+            this.destinationId = review.getDestination() != null ? review.getDestination().getId() : null; // Safely handle destination
+            this.rating = review.getRating();
+            this.comment = review.getComment();
+        }
     }
 
     // Constructor for creating a new review
@@ -44,18 +47,14 @@ public class ReviewDTO {
         if (this == o) return true;
         if (!(o instanceof ReviewDTO reviewDto)) return false;
 
-        return getId().equals(reviewDto.getId()) &&
-                getDestinationId().equals(reviewDto.getDestinationId()) &&
-                getRating() == reviewDto.getRating() &&
-                getComment().equals(reviewDto.getComment());
+        return Objects.equals(id, reviewDto.id) &&
+                Objects.equals(destinationId, reviewDto.destinationId) &&
+                rating == reviewDto.rating &&
+                Objects.equals(comment, reviewDto.comment);
     }
 
     @Override
     public int hashCode() {
-        int result = getId().hashCode();
-        result = 31 * result + getDestinationId().hashCode();
-        result = 31 * result + getRating();
-        result = 31 * result + getComment().hashCode();
-        return result;
+        return Objects.hash(id, destinationId, rating, comment); // Use Objects.hash for null safety
     }
 }

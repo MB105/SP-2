@@ -68,12 +68,7 @@ public class Booking {
 
         Booking booking = (Booking) o;
 
-        // Check if ID is set and equals, else compare based on other fields
-        if (id != 0 && booking.id != 0) {
-            return id == booking.id; // Compare IDs if they are both set
-        }
-
-        // If IDs are not set (for new bookings), compare other fields
+        // Compare IDs if they are both set
         return id == booking.id &&
                 Objects.equals(destination, booking.destination) &&
                 Objects.equals(departureDate, booking.departureDate) &&
@@ -84,13 +79,6 @@ public class Booking {
 
     @Override
     public int hashCode() {
-        // If the ID is set, use it for hash code calculation; otherwise, use other fields
-        if (id != 0) {
-            return Objects.hash(id);
-        }
-
         return Objects.hash(id, destination, departureDate, arrivalDate, bookingDate, status);
     }
 }
-
-

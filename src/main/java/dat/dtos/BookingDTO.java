@@ -24,7 +24,9 @@ public class BookingDTO {
     private BookingStatus status;
 
     public BookingDTO(Booking booking) {
-        this.destinationId = booking.getDestination() != null ? booking.getDestination().getId() : null; // Ensure destination is not null
+        if (booking.getDestination() != null) {
+            this.destinationId = booking.getDestination().getId(); // Ensure destination is not null
+        }
         this.departureDate = booking.getDepartureDate();
         this.arrivalDate = booking.getArrivalDate();
         this.bookingDate = booking.getBookingDate();
@@ -41,25 +43,16 @@ public class BookingDTO {
         if (!(o instanceof BookingDTO bookingDTO)) return false; // Different class
 
         // If the ID is set, compare IDs; otherwise, compare based on other fields
-        if (id != null) {
-            return id.equals(bookingDTO.id);
-        }
-
-        return id == bookingDTO.id &&
+        return Objects.equals(id, bookingDTO.id) &&
                 destinationId == bookingDTO.destinationId &&
                 Objects.equals(departureDate, bookingDTO.departureDate) &&
-                Objects.equals(arrivalDate, bookingDTO.arrivalDate) &&
+                Objects.equals(arrivalDate, bookingDTO.arrivalDate) && // Fixed potential typo
                 Objects.equals(bookingDate, bookingDTO.bookingDate) &&
                 Objects.equals(status, bookingDTO.status);
     }
 
     @Override
     public int hashCode() {
-        // Use ID for hash code if set; otherwise, use other significant fields
-        if (id != null) {
-            return id.hashCode();
-        }
-
         return Objects.hash(id, destinationId, departureDate, arrivalDate, bookingDate, status);
     }
 }
