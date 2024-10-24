@@ -1,6 +1,7 @@
 import dat.config.HibernateConfig;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
+import io.restassured.response.ValidatableResponse;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import org.junit.jupiter.api.AfterEach;
@@ -25,17 +26,13 @@ public class EndpointTest {
     static EntityManager em;
 
 
-
-
-
-
     @BeforeAll
     public static void setup() {
         // Set up base URI
         baseURI = "http://localhost:7070/travel";
         RestAssured.baseURI = baseURI;
 
-        emfTest=HibernateConfig.getEntityManagerFactoryForTest();
+        emfTest = HibernateConfig.getEntityManagerFactoryForTest();
         SecurityDAO securityDAO = new SecurityDAO(emfTest);
 
 
@@ -77,7 +74,7 @@ public class EndpointTest {
     }
 
     @Test
-    public void testRegister(){
+    public void testRegister() {
         Response response = given()
                 .contentType("application/json")
                 .body("{ \"username\": \"admin10\", \"password\": \"test123\" }")
@@ -91,6 +88,38 @@ public class EndpointTest {
                 .response();
 
 
+    }
 
+    @Test
+    public void testAdminAccessWithUser() {
+
+
+        Response loginResponse = given()
+                .contentType("application/json")
+                .body("{ \"username\": \"user\", \"password\": \"test123\" }")
+                .when()
+                .post("/auth/login")
+                .then()
+                .statusCode(200)
+                .body("token", notNullValue())
+                .extract()
+                .response();
+
+
+        String token = loginResponse.jsonPath().getString("token");
+
+
+        ValidatableResponse validatableResponse = given()
+                .header("Authorization", "Bearer " + token)
+                .when()
+                .delete("/reviews/6")
+                .then();
+
+
+        validatableResponse.log().all();
+
+
+        validatableResponse
+                .statusCode(401);
     }
 }
