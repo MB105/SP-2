@@ -4,57 +4,42 @@ import dat.entities.Review;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class ReviewDTO {
-    private Integer id; // Unique identifier for the review
-    private Integer destinationId; // ID of the associated destination
-    private int rating; // Rating given in the review
-    private String comment; // Comment provided in the review
+    private Integer id;
+    private Integer destinationId;
+    private int rating;
+    private String comment;
 
-    // Conversion constructor from Review entity
     public ReviewDTO(Review review) {
-        if (review != null) { // Ensure review is not null
+        if (review != null) {
             this.id = review.getId();
-            this.destinationId = review.getDestination() != null ? review.getDestination().getId() : null; // Safely handle destination
+            this.destinationId = review.getDestination() != null ? review.getDestination().getId() : null;
             this.rating = review.getRating();
             this.comment = review.getComment();
         }
     }
 
-    // Constructor for creating a new review
-    public ReviewDTO(Integer destinationId, int rating, String comment) {
-        this.destinationId = destinationId;
-        this.rating = rating;
-        this.comment = comment;
-    }
-
-    // Method to convert a list of Review entities to ReviewDTOs
-    public static List<ReviewDTO> toReviewDTOList(List<Review> reviews) {
-        return reviews.stream()
-                .map(ReviewDTO::new)
-                .collect(Collectors.toList());
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof ReviewDTO reviewDto)) return false;
+        // sammenligner dette objekt med et andet objekt for at tjekke om de er ens
+        if (this == o) return true; // hvis de er det samme objekt, returner true
+        if (!(o instanceof ReviewDTO reviewDto)) return false; // tjekker om det er af typen ReviewDTO
 
+        // sammenligner id, destinationId, rating og kommentar for lighed
         return Objects.equals(id, reviewDto.id) &&
-                Objects.equals(destinationId, reviewDto.destinationId) &&
+                Objects.equals(destinationId, reviewDto.destinationId) && // bruger Objects.equals for at undgå NullPointerException
                 rating == reviewDto.rating &&
-                Objects.equals(comment, reviewDto.comment);
+                Objects.equals(comment, reviewDto.comment); // bruger Objects.equals for at sammenligne comments
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, destinationId, rating, comment); // Use Objects.hash for null safety
+        // genererer hashkode baseret på id, destinationId, rating og kommentar for at sikre unik identifikation
+        return Objects.hash(id, destinationId, rating, comment); // bruger Objects.hash for null safety
     }
 }
