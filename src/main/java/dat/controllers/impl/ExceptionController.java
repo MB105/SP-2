@@ -11,14 +11,16 @@ public class ExceptionController {
     private final Logger LOGGER = LoggerFactory.getLogger(Routes.class);
 
     public void apiExceptionHandler(ApiException e, Context ctx) {
+        // Logger fejlmeddelelse ved API-fejl
         LOGGER.error(ctx.attribute("requestInfo") + " " + ctx.res().getStatus() + " " + e.getMessage());
         ctx.status(e.getStatusCode());
         ctx.json(new Message(e.getStatusCode(), e.getMessage()));
     }
+
     public void exceptionHandler(Exception e, Context ctx) {
+        // Logger fejlmeddelelse ved generelle fejl
         LOGGER.error(ctx.attribute("requestInfo") + " " + ctx.res().getStatus() + " " + e.getMessage());
         ctx.status(500);
         ctx.json(new Message(500, e.getMessage()));
     }
-
 }

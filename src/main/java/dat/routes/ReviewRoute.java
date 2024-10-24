@@ -1,6 +1,5 @@
 package dat.routes;
 
-import dat.controllers.impl.BookingController;
 import dat.controllers.impl.ReviewController;
 import dat.security.enums.Role;
 import io.javalin.apibuilder.EndpointGroup;

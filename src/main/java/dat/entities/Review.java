@@ -22,29 +22,27 @@ public class Review {
     @Setter
     @ManyToOne
     @JoinColumn(name = "destination_id", nullable = false)
-    private Destination destination; // Many reviews can refer to one destination
+    private Destination destination;
 
     @Setter
     @Column(name = "rating", nullable = false)
-    private int rating; // Rating out of a specified scale (e.g., 1 to 5)
+    private int rating;
 
     @Setter
     @Column(name = "comment", length = 500)
-    private String comment; // Comment for the review, with a length limit
+    private String comment;
 
-    // Constructor for creating a new review
     public Review(Destination destination, int rating, String comment) {
         this.destination = destination;
         this.rating = rating;
         this.comment = comment;
     }
 
-    // Conversion constructor from DTO
     public Review(ReviewDTO reviewDTO, Destination destination) {
-        this.id = reviewDTO.getId(); // Set ID for existing reviews
-        this.rating = reviewDTO.getRating(); // Map rating from DTO
-        this.comment = reviewDTO.getComment(); // Map comment from DTO
-        this.destination = destination; // Set the destination from the DTO context
+        this.id = reviewDTO.getId();
+        this.rating = reviewDTO.getRating();
+        this.comment = reviewDTO.getComment();
+        this.destination = destination;
     }
 
     @Override

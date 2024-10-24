@@ -15,18 +15,22 @@ public class ReviewController implements IController<ReviewDTO, Integer> {
     private final ReviewDAO dao;
 
     public ReviewController() {
+        // Henter EntityManagerFactory og initialiserer ReviewDAO
         EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
         this.dao = ReviewDAO.getInstance(emf);
     }
 
-    //her bliver der læst en anmeldese ved hjælp af id
     @Override
     public void read(Context ctx) {
-        // request
-        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validatePrimaryKey, "Not a valid id").get();
-        // DTO
+        // Læser anmeldelses id fra URL'en
+        int id = ctx.pathParamAsClass("id", Integer.class)
+                .check(this::validatePrimaryKey, "Not a valid id")
+                .get();
+
+        // Finder anmeldelse med det givne id
         ReviewDTO reviewDTO = dao.read(id);
-        // response
+
+        // Returnerer anmeldelse hvis fundet ellers får man en 404 status
         if (reviewDTO != null) {
             ctx.res().setStatus(200);
             ctx.json(reviewDTO, ReviewDTO.class);
@@ -36,35 +40,40 @@ public class ReviewController implements IController<ReviewDTO, Integer> {
         }
     }
 
-    //læser alle anmeldelser
     @Override
     public void readAll(Context ctx) {
-        // List of DTOS
+        // Henter alle anmeldelser
         List<ReviewDTO> reviewDTOS = dao.readAll();
-        // response
+
+        // Returnerer listen over anmeldelser
         ctx.res().setStatus(200);
         ctx.json(reviewDTOS, ReviewDTO.class);
     }
 
     @Override
     public void create(Context ctx) {
-        // request
+        // Validerer og henter anmeldelsesdata fra request body
         ReviewDTO jsonRequest = ctx.bodyAsClass(ReviewDTO.class);
-        // DTO
+
+        // Opretter ny anmeldelse i databasen
         ReviewDTO reviewDTO = dao.create(jsonRequest);
-        // response
+
+        // Returnerer den nye anmeldelse med status 201
         ctx.res().setStatus(201);
         ctx.json(reviewDTO, ReviewDTO.class);
     }
 
-    //Vi bruger ikke update.
     @Override
     public void update(Context ctx) {
-        // request
-        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validatePrimaryKey, "Not a valid id").get();
-        // dto
+        // Læser anmeldelses id fra URL'en
+        int id = ctx.pathParamAsClass("id", Integer.class)
+                .check(this::validatePrimaryKey, "Not a valid id")
+                .get();
+
+        // Opdaterer eksisterende anmeldelse med nye data
         ReviewDTO reviewDTO = dao.update(id, validateEntity(ctx));
-        // response
+
+        // Returnerer opdateret anmeldelse hvis fundet ellers får man en 404 status
         if (reviewDTO != null) {
             ctx.res().setStatus(200);
             ctx.json(reviewDTO, ReviewDTO.class);
@@ -76,20 +85,27 @@ public class ReviewController implements IController<ReviewDTO, Integer> {
 
     @Override
     public void delete(Context ctx) {
-        // request
-        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validatePrimaryKey, "Not a valid id").get();
+        // Læser anmeldelses id fra URL'en
+        int id = ctx.pathParamAsClass("id", Integer.class)
+                .check(this::validatePrimaryKey, "Not a valid id")
+                .get();
+
+        // Sletter anmeldelse med det givne id
         dao.delete(id);
-        // response
+
+        // Returnerer status 204
         ctx.res().setStatus(204);
     }
 
     @Override
     public boolean validatePrimaryKey(Integer integer) {
+        // Validerer, om anmeldelses id er gyldigt
         return dao.validatePrimaryKey(integer);
     }
 
     @Override
     public ReviewDTO validateEntity(Context ctx) {
+        // Validerer anmeldelses data i request body
         return ctx.bodyValidator(ReviewDTO.class)
                 .check(r -> r.getComment() != null && !r.getComment().isEmpty(), "Review comment must be set")
                 .check(r -> r.getRating() >= 1 && r.getRating() <= 5, "Rating must be between 1 and 5")
@@ -98,4 +114,3 @@ public class ReviewController implements IController<ReviewDTO, Integer> {
                 .get();
     }
 }
-

@@ -13,11 +13,11 @@ import java.util.List;
 @NoArgsConstructor(access = lombok.AccessLevel.PRIVATE)
 public class DestinationDAO implements IDAO<DestinationDTO, Integer> {
 
-
     private static DestinationDAO instance;
     private static EntityManagerFactory emf;
 
     public static DestinationDAO getInstance(EntityManagerFactory _emf) {
+        // opretter en ny instans af destinationdao
         if (instance == null) {
             emf = _emf;
             instance = new DestinationDAO();
@@ -27,7 +27,12 @@ public class DestinationDAO implements IDAO<DestinationDTO, Integer> {
 
     @Override
     public DestinationDTO read(Integer destinationId) {
+        // tjekker om destination id er null
+        if (destinationId == null) {
+            throw new IllegalArgumentException("destination id cannot be null.");
+        }
         try (EntityManager em = emf.createEntityManager()) {
+            // finder destination med det givne destination id
             Destination destination = em.find(Destination.class, destinationId);
             return destination != null ? new DestinationDTO(destination) : null;
         }
@@ -36,6 +41,7 @@ public class DestinationDAO implements IDAO<DestinationDTO, Integer> {
     @Override
     public List<DestinationDTO> readAll() {
         try (EntityManager em = emf.createEntityManager()) {
+            // henter alle destinationer som destination dtos
             TypedQuery<DestinationDTO> query = em.createQuery("SELECT new dat.dtos.DestinationDTO(d) FROM Destination d", DestinationDTO.class);
             return query.getResultList();
         }
@@ -43,8 +49,14 @@ public class DestinationDAO implements IDAO<DestinationDTO, Integer> {
 
     @Override
     public DestinationDTO create(DestinationDTO destinationDTO) {
+        // tjekker om destination dto er null
+        if (destinationDTO == null) {
+            throw new IllegalArgumentException("destination dto cannot be null.");
+        }
+
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
+            // opretter ny destination baseret på destination dto
             Destination destination = new Destination(destinationDTO);
             em.persist(destination);
             em.getTransaction().commit();
@@ -54,8 +66,14 @@ public class DestinationDAO implements IDAO<DestinationDTO, Integer> {
 
     @Override
     public DestinationDTO update(Integer destinationId, DestinationDTO destinationDTO) {
+        // tjekker om destination id eller destination dto er null
+        if (destinationId == null || destinationDTO == null) {
+            throw new IllegalArgumentException("destination id and destination dto cannot be null.");
+        }
+
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
+            // finder destination med det givne destination id
             Destination destination = em.find(Destination.class, destinationId);
             if (destination != null) {
                 destination.setCity(destinationDTO.getCity());
@@ -64,14 +82,20 @@ public class DestinationDAO implements IDAO<DestinationDTO, Integer> {
                 return new DestinationDTO(destination);
             }
             em.getTransaction().rollback();
-            return null; // Handle the case where the destination doesn't exist
+            return null; // håndterer tilfælde, hvor destination ikke findes
         }
     }
 
     @Override
     public void delete(Integer destinationId) {
+        // tjekker om destination id er null
+        if (destinationId == null) {
+            throw new IllegalArgumentException("destination id cannot be null.");
+        }
+
         try (EntityManager em = emf.createEntityManager()) {
             em.getTransaction().begin();
+            // finder destination med det givne destination id
             Destination destination = em.find(Destination.class, destinationId);
             if (destination != null) {
                 em.remove(destination);
@@ -82,10 +106,15 @@ public class DestinationDAO implements IDAO<DestinationDTO, Integer> {
 
     @Override
     public boolean validatePrimaryKey(Integer destinationId) {
+        // tjekker om destination id er null
+        if (destinationId == null) {
+            throw new IllegalArgumentException("destination id cannot be null.");
+        }
+
         try (EntityManager em = emf.createEntityManager()) {
+            // finder destination med det givne destination id
             Destination destination = em.find(Destination.class, destinationId);
             return destination != null;
         }
     }
 }
-

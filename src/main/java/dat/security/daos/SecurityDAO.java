@@ -1,6 +1,5 @@
 package dat.security.daos;
 
-
 import dat.security.entities.Role;
 import dat.security.entities.User;
 import dat.security.exceptions.ApiException;
@@ -11,14 +10,8 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.EntityNotFoundException;
 
-import java.util.Set;
 import java.util.stream.Collectors;
 
-
-/**
- * Purpose: To handle security in the API
- * Author: Thomas Hartmann
- */
 public class SecurityDAO implements ISecurityDAO {
 
     private static ISecurityDAO instance;
@@ -61,7 +54,7 @@ public class SecurityDAO implements ISecurityDAO {
             em.persist(userEntity);
             em.getTransaction().commit();
             return userEntity;
-        }catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
             throw new ApiException(400, e.getMessage());
         }
@@ -74,13 +67,13 @@ public class SecurityDAO implements ISecurityDAO {
             if (user == null)
                 throw new EntityNotFoundException("No user found with username: " + userDTO.getUsername());
             em.getTransaction().begin();
-                Role role = em.find(Role.class, newRole);
-                if (role == null) {
-                    role = new Role(newRole);
-                    em.persist(role);
-                }
-                user.addRole(role);
-                //em.merge(user);
+            Role role = em.find(Role.class, newRole);
+            if (role == null) {
+                role = new Role(newRole);
+                em.persist(role);
+            }
+            user.addRole(role);
+            //em.merge(user);
             em.getTransaction().commit();
             return user;
         }
