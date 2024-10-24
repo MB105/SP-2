@@ -28,6 +28,8 @@ public class EndpointTest {
 
     @BeforeAll
     public static void setup() {
+
+        HibernateConfig.setTest(true);
         // Set up base URI
         baseURI = "http://localhost:7070/travel";
         RestAssured.baseURI = baseURI;
