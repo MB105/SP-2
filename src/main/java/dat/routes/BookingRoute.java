@@ -14,7 +14,7 @@ public class BookingRoute {
 
         return () -> {
             post("/", bookingController::create, Role.USER);
-            get("/", bookingController::readAll, Role.USER, Role.ADMIN);
+            get("/", bookingController::readAll, Role.USER);
             get("/{id}", bookingController::read, Role.USER, Role.ADMIN);
             put("/{id}", bookingController::update, Role.ADMIN);
             delete("/{id}", bookingController::delete, Role.USER, Role.ADMIN);
