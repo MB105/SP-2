@@ -1,70 +1,41 @@
-import dat.config.HibernateConfig;
+import dat.config.ApplicationConfig;
+import io.javalin.Javalin;
 import io.restassured.RestAssured;
 import io.restassured.response.Response;
 import io.restassured.response.ValidatableResponse;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.EntityManagerFactory;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.*;
+
 import static io.restassured.RestAssured.*;
 import static org.hamcrest.Matchers.*;
-import dat.config.HibernateConfig;
-import dat.security.controllers.SecurityController;
-import dat.security.daos.SecurityDAO;
-
 
 public class EndpointTest {
 
+    private static final String BASE_URI = "http://localhost:7070/travel";
 
-    // Base URI for the API
-    static String baseURI;
-
-    static EntityManagerFactory emfTest;
-
-    static EntityManager em;
-
+    private static Javalin app;
 
     @BeforeAll
     public static void setup() {
 
-        HibernateConfig.setTest(true);
-        // Set up base URI
-        baseURI = "http://localhost:7070/travel";
-        RestAssured.baseURI = baseURI;
-
-        emfTest = HibernateConfig.getEntityManagerFactoryForTest();
-        SecurityDAO securityDAO = new SecurityDAO(emfTest);
-
-
+        app=ApplicationConfig.startServer(7070);
+        RestAssured.baseURI = BASE_URI;
     }
 
-    @BeforeEach
-    public void setUp() {
+    @AfterAll
+    public static void tearDown() {
 
 
-        em = emfTest.createEntityManager();
-        em.getTransaction().begin();
+        ApplicationConfig.stopServer(app);
     }
-
-    @AfterEach
-    public void tearDown() {
-        em.getTransaction().commit(); // Commit the transaction
-        em.close(); // Close the EntityManager
-    }
-
 
     @Test
     public void testLogin() {
-
-
         // Send POST request to login endpoint
         Response response = given()
                 .contentType("application/json")
                 .body("{ \"username\": \"admin\", \"password\": \"test123\" }")
                 .when()
-                .post ("http://localhost:7070/travel/auth/login/")
+                .post("/auth/login/") // Use the base URI here
                 .then()
                 .statusCode(200)
                 .body("token", notNullValue())
@@ -81,7 +52,7 @@ public class EndpointTest {
                 .contentType("application/json")
                 .body("{ \"username\": \"adminTest\", \"password\": \"test123\" }")
                 .when()
-                .post("http://localhost:7070/travel/auth/register/")
+                .post("/auth/register/")
                 .then()
                 .statusCode(201)
                 .body("token", notNullValue())
@@ -94,34 +65,29 @@ public class EndpointTest {
 
     @Test
     public void testAdminAccessWithUser() {
-
-
         Response loginResponse = given()
                 .contentType("application/json")
                 .body("{ \"username\": \"user\", \"password\": \"test123\" }")
                 .when()
-                .post("http://localhost:7070/travel/auth/login/")
+                .post("/auth/login/")
                 .then()
                 .statusCode(200)
                 .body("token", notNullValue())
                 .extract()
                 .response();
 
-
         String token = loginResponse.jsonPath().getString("token");
-
 
         ValidatableResponse validatableResponse = given()
                 .header("Authorization", "Bearer " + token)
                 .when()
-                .delete("http://localhost:7070/travel/reviews/6")
+                .delete("/reviews/6")
                 .then();
 
-
         validatableResponse.log().all();
-
 
         validatableResponse
                 .statusCode(401);
     }
 }
+
