@@ -62,7 +62,7 @@ public class EndpointTest {
                 .contentType("application/json")
                 .body("{ \"username\": \"admin\", \"password\": \"test123\" }")
                 .when()
-                .post("/auth/login")
+                .post ("http://localhost:7070/travel/auth/login")
                 .then()
                 .statusCode(200)
                 .body("token", notNullValue())
@@ -77,13 +77,13 @@ public class EndpointTest {
     public void testRegister() {
         Response response = given()
                 .contentType("application/json")
-                .body("{ \"username\": \"admin10\", \"password\": \"test123\" }")
+                .body("{ \"username\": \"adminTest\", \"password\": \"test123\" }")
                 .when()
-                .post("/auth/register/")
+                .post("http://localhost:7070/travel/auth/register")
                 .then()
                 .statusCode(201)
                 .body("token", notNullValue())
-                .body("username", equalTo("admin10"))
+                .body("username", equalTo("adminTest"))
                 .extract()
                 .response();
 
@@ -98,7 +98,7 @@ public class EndpointTest {
                 .contentType("application/json")
                 .body("{ \"username\": \"user\", \"password\": \"test123\" }")
                 .when()
-                .post("/auth/login")
+                .post("http://localhost:7070/travel/auth/login")
                 .then()
                 .statusCode(200)
                 .body("token", notNullValue())
@@ -112,7 +112,7 @@ public class EndpointTest {
         ValidatableResponse validatableResponse = given()
                 .header("Authorization", "Bearer " + token)
                 .when()
-                .delete("/reviews/6")
+                .delete("http://localhost:7070/travel/reviews/6")
                 .then();
 
 
