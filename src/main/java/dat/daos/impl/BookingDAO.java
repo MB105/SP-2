@@ -61,11 +61,7 @@ public class BookingDAO implements IDAO<BookingDTO, Integer> {
 
             if (destination == null) {
                 em.getTransaction().rollback();
-
-                return null; // Handle the case where the destination city does not exist
-
                 throw new BadRequestResponse("Destination not found.");
-
             }
 
             Booking booking = new Booking(bookingDTO, destination); // Pass the destination
@@ -73,11 +69,8 @@ public class BookingDAO implements IDAO<BookingDTO, Integer> {
             em.getTransaction().commit();
             return new BookingDTO(booking);
         } catch (Exception e) {
-
-             
             e.printStackTrace();
             throw new BadRequestResponse("Error while creating booking: " + e.getMessage());
-
         }
     }
 
@@ -92,14 +85,10 @@ public class BookingDAO implements IDAO<BookingDTO, Integer> {
 
             Booking booking = em.find(Booking.class, bookingId);
             if (booking != null) {
-
-                Destination destination = em.find(Destination.class, bookingDTO.getDestinationCity());
-
                 // Fetch destination by city
                 TypedQuery<Destination> destQuery = em.createQuery("SELECT d FROM Destination d WHERE d.city = :city", Destination.class);
                 destQuery.setParameter("city", bookingDTO.getDestinationCity());
                 Destination destination = destQuery.getResultStream().findFirst().orElse(null);
-
 
                 if (destination != null) {
                     booking.setDestination(destination);
