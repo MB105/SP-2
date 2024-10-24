@@ -30,12 +30,11 @@ public class EndpointTest {
 
     @Test
     public void testLogin() {
-        // Send POST request to login endpoint
         Response response = given()
                 .contentType("application/json")
                 .body("{ \"username\": \"admin\", \"password\": \"test123\" }")
                 .when()
-                .post("/auth/login/") // Use the base URI here
+                .post("/auth/login/")
                 .then()
                 .statusCode(200)
                 .body("token", notNullValue())
