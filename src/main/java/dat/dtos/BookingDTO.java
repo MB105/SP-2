@@ -8,16 +8,14 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class BookingDTO {
-    private Integer id; // Assuming Booking entity now has this as primary key
-    private Integer destinationId; // Assuming this is the ID of the destination booked
+    private Integer id;
+    private Integer destinationId;
     private String destinationCity;
     private LocalDateTime departureDate;
     private LocalDateTime arrivalDate;
@@ -25,7 +23,7 @@ public class BookingDTO {
     private BookingStatus status;
 
     public BookingDTO(Booking booking) {
-        this.destinationId = booking.getDestination() != null ? booking.getDestination().getId() : null; // Ensure destination is not null
+        this.destinationId = booking.getDestination() != null ? booking.getDestination().getId() : null;
         this.destinationCity = booking.getDestination() != null ? booking.getDestination().getCity() : null;
         this.departureDate = booking.getDepartureDate();
         this.arrivalDate = booking.getArrivalDate();
@@ -34,22 +32,18 @@ public class BookingDTO {
         this.id = booking.getId() != null ? booking.getId() : null;
     }
 
-    public static List<BookingDTO> toBookingDTOList(List<Booking> bookings) {
-        return bookings.stream().map(BookingDTO::new).collect(Collectors.toList());
-    }
-
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true; // Same object
-        if (!(o instanceof BookingDTO bookingDTO)) return false; // Different class
+        // sammenligner to BookingDTO objekter for lighed
+        if (this == o) return true; // hvis de er det samme objekt
+        if (!(o instanceof BookingDTO bookingDTO)) return false; // tjekker om objektet er en BookingDTO
 
-        // If the ID is set, compare IDs; otherwise, compare based on other fields
         if (id != null) {
-            return id.equals(bookingDTO.id);
+            return id.equals(bookingDTO.id); // sammenligner id hvis det ikke er null
         }
 
+        // sammenligner alle relevante felter for lighed
         return id == bookingDTO.id &&
-                //destinationId == bookingDTO.destinationId &&
                 Objects.equals(destinationCity, bookingDTO.destinationCity) &&
                 Objects.equals(departureDate, bookingDTO.departureDate) &&
                 Objects.equals(arrivalDate, bookingDTO.arrivalDate) &&
@@ -59,11 +53,11 @@ public class BookingDTO {
 
     @Override
     public int hashCode() {
-        // Use ID for hash code if set; otherwise, use other significant fields
         if (id != null) {
-            return id.hashCode();
+            return id.hashCode(); // returnerer hashkode baseret på id hvis det ikke er null
         }
 
+        // genererer hashkode baseret på de relevante felter
         return Objects.hash(id, destinationCity, departureDate, arrivalDate, bookingDate, status);
     }
 }

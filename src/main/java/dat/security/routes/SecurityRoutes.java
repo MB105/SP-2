@@ -9,10 +9,6 @@ import io.javalin.apibuilder.EndpointGroup;
 
 import static io.javalin.apibuilder.ApiBuilder.*;
 
-/**
- * Purpose: To handle security in the API
- *  Author: Thomas Hartmann
- */
 public class SecurityRoutes {
     private static ObjectMapper jsonMapper = new Utils().getObjectMapper();
     private static SecurityController securityController = SecurityController.getInstance();

@@ -24,7 +24,7 @@ class BookingDAOTest {
 
     @BeforeAll
     static void setup() {
-        // Initialize test configuration and fetch entity manager factory
+        // Initialiserer testkonfiguration og henter entity manager fabrik
         HibernateConfig.setTest(true);
         emf = HibernateConfig.getEntityManagerFactoryForTest();
         bookingDAO = BookingDAO.getInstance(emf);
@@ -33,11 +33,11 @@ class BookingDAOTest {
 
     @Test
     void create() {
-        // First, create a destination
-        DestinationDTO destinationDTO = new DestinationDTO(null, "Paris", "France");
+        // Først oprettes en destination
+        DestinationDTO destinationDTO = new DestinationDTO(null, "Paris", "Frankrig");
         DestinationDTO createdDestination = destinationDAO.create(destinationDTO);
 
-        // Create a booking for the created destination
+        // Opretter en booking for den oprettede destination
         BookingDTO bookingDTO = new BookingDTO(null, createdDestination.getId(), "Paris",
                 LocalDateTime.now().plusDays(2),
                 LocalDateTime.now().plusDays(5),
@@ -45,11 +45,7 @@ class BookingDAOTest {
                 BookingStatus.CONFIRMED);
         BookingDTO createdBooking = bookingDAO.create(bookingDTO);
 
-        System.out.println("hi"+createdBooking.getId());
-        System.out.println("hi"+createdDestination.getId());
-        System.out.println("hi"+createdBooking.getDestinationId());
-
-        // Assert that the booking was created successfully
+        // Bekræft at bookingen blev oprettet korrekt
         assertNotNull(createdBooking);
         assertNotNull(createdBooking.getId());
         assertEquals("Paris", createdBooking.getDestinationCity());
@@ -58,11 +54,11 @@ class BookingDAOTest {
 
     @Test
     void read() {
-        // First, create a destination
-        DestinationDTO destinationDTO = new DestinationDTO(null, "Paris", "France");
+        // Først oprettes en destination
+        DestinationDTO destinationDTO = new DestinationDTO(null, "Paris", "Frankrig");
         DestinationDTO createdDestination = destinationDAO.create(destinationDTO);
 
-        // Create a booking
+        // Opretter en booking
         BookingDTO bookingDTO = new BookingDTO(null, createdDestination.getId(), "Paris",
                 LocalDateTime.now().plusDays(2),
                 LocalDateTime.now().plusDays(5),
@@ -70,10 +66,10 @@ class BookingDAOTest {
                 BookingStatus.CONFIRMED);
         BookingDTO createdBooking = bookingDAO.create(bookingDTO);
 
-        // Read the booking from the database
+        // Læser bookingen fra databasen
         BookingDTO fetchedBooking = bookingDAO.read(createdBooking.getId());
 
-        // Assert that the booking was fetched correctly
+        // Bekræfter at bookingen blev hentet korrekt
         assertNotNull(fetchedBooking);
         assertEquals(createdBooking.getId(), fetchedBooking.getId());
         assertEquals(createdDestination.getId(), fetchedBooking.getDestinationId());
@@ -81,8 +77,8 @@ class BookingDAOTest {
 
     @Test
     void readAll() {
-        // Create multiple destinations and their bookings
-        DestinationDTO destination1 = destinationDAO.create(new DestinationDTO(null, "Paris", "France"));
+        // Opretter flere destinationer og deres bookinger
+        DestinationDTO destination1 = destinationDAO.create(new DestinationDTO(null, "Paris", "Frankrig"));
         DestinationDTO destination2 = destinationDAO.create(new DestinationDTO(null, "London", "UK"));
         DestinationDTO destination3 = destinationDAO.create(new DestinationDTO(null, "New York", "USA"));
 
@@ -103,20 +99,20 @@ class BookingDAOTest {
                 LocalDate.now(),
                 BookingStatus.CANCELLED)));
 
-        // Fetch all bookings
+        // Henter alle bookinger
         List<BookingDTO> fetchedBookings = bookingDAO.readAll();
 
-        // Assert that three bookings were fetched
+        // Bekræfter at bookingerne blev hentet
         assertEquals(3, fetchedBookings.size());
     }
 
     @Test
     void update() {
-        // First, create a destination
-        DestinationDTO destinationDTO = new DestinationDTO(null, "Paris", "France");
+        // Først oprettes en destination
+        DestinationDTO destinationDTO = new DestinationDTO(null, "Paris", "Frankrig");
         DestinationDTO createdDestination = destinationDAO.create(destinationDTO);
 
-        // Create a booking for the created destination
+        // Opretter en booking for den oprettede destination
         BookingDTO bookingDTO = new BookingDTO(null, createdDestination.getId(), "Paris",
                 LocalDateTime.now().plusDays(2),
                 LocalDateTime.now().plusDays(5),
@@ -124,37 +120,26 @@ class BookingDAOTest {
                 BookingStatus.CONFIRMED);
         BookingDTO createdBooking = bookingDAO.create(bookingDTO);
 
-        // Log the details
-        System.out.println("Initial booking ID: " + createdBooking.getId());
-        System.out.println("Initial destination ID: " + createdDestination.getId());
-        System.out.println("Initial booking's destination ID: " + createdBooking.getDestinationId());
-
-        // Update the booking - change destination city and status
+        // Opdaterer bookingen med en ny destination og status
         createdBooking.setDestinationCity("München");
         createdBooking.setStatus(BookingStatus.PENDING);
 
         DestinationDTO destinationDTO2 = new DestinationDTO(null, "München", "Tyskland");
         destinationDAO.create(destinationDTO2);
 
-        // Perform the update
+        // Udfører opdateringen
         BookingDTO updatedBooking = bookingDAO.update(createdBooking.getId(), createdBooking);
 
-        // Log the updated booking details
-        System.out.println("Updated booking ID: " + updatedBooking.getId());
-        System.out.println("Updated destination city: " + updatedBooking.getDestinationCity());
-        System.out.println("Updated status: " + updatedBooking.getStatus());
-
-        // Assert that the booking was updated correctly
+        // Bekræfter at bookingen blev opdateret korrekt
         assertNotNull(updatedBooking);
         assertEquals("München", updatedBooking.getDestinationCity());
         assertEquals(BookingStatus.PENDING, updatedBooking.getStatus());
     }
 
-
     @Test
     void delete() {
-        // Create a destination and booking
-        DestinationDTO destinationDTO = destinationDAO.create(new DestinationDTO(null, "Paris", "France"));
+        // Opretter en destination og booking
+        DestinationDTO destinationDTO = destinationDAO.create(new DestinationDTO(null, "Paris", "Frankrig"));
         BookingDTO bookingDTO = new BookingDTO(null, destinationDTO.getId(), "Paris",
                 LocalDateTime.now().plusDays(2),
                 LocalDateTime.now().plusDays(5),
@@ -163,18 +148,18 @@ class BookingDAOTest {
         BookingDTO createdBooking = bookingDAO.create(bookingDTO);
         assertNotNull(createdBooking);
 
-        // Delete the booking
+        // Sletter bookingen
         bookingDAO.delete(createdBooking.getId());
 
-        // Verify that the booking is deleted
+        // Bekræfter at bookingen er slettet
         BookingDTO fetchedBooking = bookingDAO.read(createdBooking.getId());
         assertNull(fetchedBooking);
     }
 
     @Test
     void validatePrimaryKey() {
-        // Create a destination and booking
-        DestinationDTO destinationDTO = destinationDAO.create(new DestinationDTO(null, "Paris", "France"));
+        // Opretter en destination og booking
+        DestinationDTO destinationDTO = destinationDAO.create(new DestinationDTO(null, "Paris", "Frankrig"));
         BookingDTO bookingDTO = new BookingDTO(null, destinationDTO.getId(), "Paris",
                 LocalDateTime.now().plusDays(2),
                 LocalDateTime.now().plusDays(5),
@@ -182,14 +167,14 @@ class BookingDAOTest {
                 BookingStatus.CONFIRMED);
         BookingDTO createdBooking = bookingDAO.create(bookingDTO);
 
-        // Validate that the created booking has a valid primary key
+        // Bekræfter at den oprettede booking har en gyldig primærnøgle
         assertTrue(bookingDAO.validatePrimaryKey(createdBooking.getId()));
-        assertFalse(bookingDAO.validatePrimaryKey(-1)); // Check for a non-existent ID
+        assertFalse(bookingDAO.validatePrimaryKey(-1)); // Tjekker for en ikke-eksisterende ID
     }
 
     @AfterEach
     void cleanUp() {
-        // Clean up bookings and destinations after each test
+        // Rydder op i bookinger og destinationer efter hver test
         try (var em = emf.createEntityManager()) {
             em.getTransaction().begin();
             em.createQuery("DELETE FROM Booking").executeUpdate();

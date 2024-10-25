@@ -15,17 +15,22 @@ public class DestinationController implements IController<DestinationDTO, Intege
     private final DestinationDAO dao;
 
     public DestinationController() {
+        // Henter EntityManagerFactory og initialiserer DestinationDAO
         EntityManagerFactory emf = HibernateConfig.getEntityManagerFactory();
         this.dao = DestinationDAO.getInstance(emf);
     }
 
     @Override
     public void read(Context ctx) {
-        // request
-        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validatePrimaryKey, "Not a valid id").get();
-        // DTO
+        // Læser destination id fra URL'en
+        int id = ctx.pathParamAsClass("id", Integer.class)
+                .check(this::validatePrimaryKey, "Not a valid id")
+                .get();
+
+        // Finder destination med det givne id
         DestinationDTO destinationDTO = dao.read(id);
-        // response
+
+        // Returnerer destination hvis fundet ellers får man en 404 status
         if (destinationDTO != null) {
             ctx.res().setStatus(200);
             ctx.json(destinationDTO, DestinationDTO.class);
@@ -37,31 +42,38 @@ public class DestinationController implements IController<DestinationDTO, Intege
 
     @Override
     public void readAll(Context ctx) {
-        // List of DTOs
+        // Henter alle destinationer
         List<DestinationDTO> destinationDTOs = dao.readAll();
-        // response
+
+        // Returnerer listen over destinationer
         ctx.res().setStatus(200);
         ctx.json(destinationDTOs, DestinationDTO.class);
     }
 
     @Override
     public void create(Context ctx) {
-        // request
+        // Validerer og henter destination data fra request body
         DestinationDTO jsonRequest = ctx.bodyAsClass(DestinationDTO.class);
-        // DTO
+
+        // Opretter ny destination i databasen
         DestinationDTO destinationDTO = dao.create(jsonRequest);
-        // response
+
+        // Returnerer den nye destination med status 201
         ctx.res().setStatus(201);
         ctx.json(destinationDTO, DestinationDTO.class);
     }
 
     @Override
     public void update(Context ctx) {
-        // request
-        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validatePrimaryKey, "Not a valid id").get();
-        // dto
+        // Læser destination id fra URL'en
+        int id = ctx.pathParamAsClass("id", Integer.class)
+                .check(this::validatePrimaryKey, "Not a valid id")
+                .get();
+
+        // Opdaterer eksisterende destination med nye data
         DestinationDTO destinationDTO = dao.update(id, validateEntity(ctx));
-        // response
+
+        // Returnerer opdateret destination hvis fundet ellers får man en 404 status
         if (destinationDTO != null) {
             ctx.res().setStatus(200);
             ctx.json(destinationDTO, DestinationDTO.class);
@@ -73,21 +85,27 @@ public class DestinationController implements IController<DestinationDTO, Intege
 
     @Override
     public void delete(Context ctx) {
-        // request
-        int id = ctx.pathParamAsClass("id", Integer.class).check(this::validatePrimaryKey, "Not a valid id").get();
+        // Læser destination id fra URL'en
+        int id = ctx.pathParamAsClass("id", Integer.class)
+                .check(this::validatePrimaryKey, "Not a valid id")
+                .get();
+
+        // Sletter destination med det givne id
         dao.delete(id);
 
-        // response
+        // Returnerer status 204
         ctx.res().setStatus(204);
     }
 
     @Override
     public boolean validatePrimaryKey(Integer id) {
+        // Validerer om destination id er gyldigt
         return dao.validatePrimaryKey(id);
     }
 
     @Override
     public DestinationDTO validateEntity(Context ctx) {
+        // Validerer destination data i request body
         return ctx.bodyValidator(DestinationDTO.class)
                 .check(d -> d.getCity() != null && !d.getCity().isEmpty(), "City must be set")
                 .check(d -> d.getCountry() != null && !d.getCountry().isEmpty(), "Country must be set")
