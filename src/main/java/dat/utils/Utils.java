@@ -13,50 +13,47 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-/**
- * Purpose: Utility class to read properties from a file
- * Author: Thomas Hartmann
- */
 public class Utils {
     public static void main(String[] args) {
         System.out.println(getPropertyValue("db.name", "properties-from-pom.properties"));
     }
-    public static String getPropertyValue(String propName, String resourceName)  {
-        // REMEMBER TO BUILD WITH MAVEN FIRST. Read the property file if not deployed (else read system vars instead)
-        // Read from ressources/config.properties or from pom.xml depending on the ressourceName
+
+    public static String getPropertyValue(String propName, String resourceName) {
+        // HUSK AT BUILDE MED MAVEN FØRST. Læs ejendomsfilen, hvis ikke deployed (ellers læs systemvariable i stedet)
+        // Læs fra ressourcer/config.properties eller fra pom.xml afhængigt af resourceName
         try (InputStream is = Utils.class.getClassLoader().getResourceAsStream(resourceName)) {
             Properties prop = new Properties();
             prop.load(is);
 
             String value = prop.getProperty(propName);
             if (value != null) {
-                return value.trim();  // Trim whitespace
+                return value.trim();  // Fjern evt. mellemrum
             } else {
-                throw new ApiException(500, String.format("Property %s not found in %s", propName, resourceName));
+                throw new ApiException(500, String.format("Egenskab %s blev ikke fundet i %s", propName, resourceName));
             }
         } catch (IOException ex) {
             ex.printStackTrace();
-            throw new ApiException(500, String.format("Could not read property %s. Did you remember to build the project with MAVEN?", propName));
+            throw new ApiException(500, String.format("Kunne ikke læse egenskaben %s. Huskede du at bygge projektet med MAVEN?", propName));
         }
     }
 
     public ObjectMapper getObjectMapper() {
         ObjectMapper objectMapper = new ObjectMapper();
-        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); // Ignore unknown properties in JSON
-        objectMapper.registerModule(new JavaTimeModule()); // Serialize and deserialize java.time objects
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false); // Ignorer ukendte egenskaber i JSON
+        objectMapper.registerModule(new JavaTimeModule()); // Serialiser og deserialiser java.time objekter
         objectMapper.writer(new DefaultPrettyPrinter());
         return objectMapper;
     }
 
     public static String convertToJsonMessage(Context ctx, String property, String message) {
         Map<String, String> msgMap = new HashMap<>();
-        msgMap.put(property, message);  // Put the message in the map
-        msgMap.put("status", String.valueOf(ctx.status()));  // Put the status in the map
+        msgMap.put(property, message);  // Indsæt beskeden i mappen
+        msgMap.put("status", String.valueOf(ctx.status()));  // Indsæt status i mappen
         ObjectMapper objectMapper = new ObjectMapper();
         try {
-            return objectMapper.writeValueAsString(msgMap);  // Convert the map to JSON
+            return objectMapper.writeValueAsString(msgMap);  // Konverter mappen til JSON
         } catch (Exception e) {
-            return "{\"error\": \"Could not convert  message to JSON\"}";
+            return "{\"error\": \"Kunne ikke konvertere besked til JSON\"}";
         }
     }
 }

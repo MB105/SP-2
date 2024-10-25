@@ -14,25 +14,25 @@ public class AccessController implements IAccessController {
 
     public void accessHandler(Context ctx) {
 
-        // If no roles are specified on the endpoint, then anyone can access the route
+        // Hvis der ikke er specificeret roller på endpointen kan alle tilgå ruten
         if (ctx.routeRoles().isEmpty() || ctx.routeRoles().contains(Role.ANYONE)){
-           return;
+            return;
         }
 
-        // Check if the user is authenticated
+        // Tjek om brugeren er autentificeret
         try {
             securityController.authenticate().handle(ctx);
         } catch (UnauthorizedResponse e) {
             throw new UnauthorizedResponse(e.getMessage());
         } catch (Exception e) {
-            throw new UnauthorizedResponse("You need to log in, dude! Or you token is invalid.");
+            throw new UnauthorizedResponse("Du skal logge ind, makker! Eller også er din token ugyldig.");
         }
 
-        // Check if the user has the necessary roles to access the route
+        // Tjek om brugeren har de nødvendige roller til at få adgang til ruten
         UserDTO user = ctx.attribute("user");
-        Set<RouteRole> allowedRoles = ctx.routeRoles(); // roles allowed for the current route
+        Set<RouteRole> allowedRoles = ctx.routeRoles(); // roller tilladt for den aktuelle rute
         if (!securityController.authorize(user, allowedRoles)) {
-            throw new UnauthorizedResponse("Unauthorized with roles: " + user.getRoles() + ". Needed roles are: " + allowedRoles);
+            throw new UnauthorizedResponse("Ikke autoriseret med roller: " + user.getRoles() + ". Nødvendige roller er: " + allowedRoles);
         }
     }
 }

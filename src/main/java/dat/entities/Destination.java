@@ -37,7 +37,6 @@ public class Destination {
         this.country = country;
     }
 
-    // Conversion constructor
     public Destination(DestinationDTO destinationDTO) {
         this.city = destinationDTO.getCity();
         this.country = destinationDTO.getCountry();

@@ -1,6 +1,5 @@
 package dat.entities;
 
-import dat.dtos.ReviewDTO;
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -36,13 +35,6 @@ public class Review {
         this.destination = destination;
         this.rating = rating;
         this.comment = comment;
-    }
-
-    public Review(ReviewDTO reviewDTO, Destination destination) {
-        this.id = reviewDTO.getId();
-        this.rating = reviewDTO.getRating();
-        this.comment = reviewDTO.getComment();
-        this.destination = destination;
     }
 
     @Override
