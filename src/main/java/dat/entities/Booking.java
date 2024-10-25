@@ -43,7 +43,6 @@ public class Booking {
     @Column(name = "status", nullable = false)
     private BookingStatus status;
 
-    // Constructor that does not set ID when creating a new booking
     public Booking(Destination destination, LocalDateTime departureDate, LocalDateTime arrivalDate, LocalDate bookingDate, BookingStatus status) {
         this.destination = destination;
         this.departureDate = departureDate;

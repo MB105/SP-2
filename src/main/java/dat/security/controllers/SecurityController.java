@@ -38,7 +38,8 @@ public class SecurityController implements ISecurityController {
 
     private SecurityController() { }
 
-    public static SecurityController getInstance() { // Singleton because we don't want multiple instances of the same class
+    // Singleton metode til at oprette en instans af SecurityController
+    public static SecurityController getInstance() {
         if (instance == null) {
             instance = new SecurityController();
         }
@@ -46,27 +47,27 @@ public class SecurityController implements ISecurityController {
         return instance;
     }
 
+    // Login handler der validerer bruger og returnerer en JWT token
     @Override
     public Handler login() {
         return (ctx) -> {
-            ObjectNode returnObject = objectMapper.createObjectNode(); // for sending json messages back to the client
+            ObjectNode returnObject = objectMapper.createObjectNode();
             try {
                 UserDTO user = ctx.bodyAsClass(UserDTO.class);
                 UserDTO verifiedUser = securityDAO.getVerifiedUser(user.getUsername(), user.getPassword());
                 String token = createToken(verifiedUser);
-
                 ctx.status(200).json(returnObject
                         .put("token", token)
                         .put("username", verifiedUser.getUsername()));
-
             } catch (EntityNotFoundException | ValidationException e) {
                 ctx.status(401);
-                System.out.println(e.getMessage());
                 ctx.json(returnObject.put("msg", e.getMessage()));
             }
         };
     }
 
+
+    // Register handler til oprettelse af en ny bruger med en rolle og returnering af en JWT token
     @Override
     public Handler register() {
         return (ctx) -> {
@@ -74,7 +75,6 @@ public class SecurityController implements ISecurityController {
             try {
                 UserDTO userInput = ctx.bodyAsClass(UserDTO.class);
                 User created = securityDAO.createUser(userInput.getUsername(), userInput.getPassword());
-
                 String token = createToken(new UserDTO(created.getUsername(), Set.of("USER")));
                 ctx.status(HttpStatus.CREATED).json(returnObject
                         .put("token", token)
@@ -86,12 +86,12 @@ public class SecurityController implements ISecurityController {
         };
     }
 
+
+    // Authenticate handler til at verificere brugeren via en JWT token.
     @Override
     public Handler authenticate() throws UnauthorizedResponse {
-
         ObjectNode returnObject = objectMapper.createObjectNode();
         return (ctx) -> {
-            // This is a preflight request => OK
             if (ctx.method().toString().equals("OPTIONS")) {
                 ctx.status(200);
                 return;
@@ -100,44 +100,40 @@ public class SecurityController implements ISecurityController {
             if (header == null) {
                 throw new UnauthorizedResponse("Authorization header missing");
             }
-
             String[] headerParts = header.split(" ");
             if (headerParts.length != 2) {
                 throw new UnauthorizedResponse("Authorization header malformed");
             }
-
             String token = headerParts[1];
             UserDTO verifiedTokenUser = verifyToken(token);
-
             if (verifiedTokenUser == null) {
                 throw new UnauthorizedResponse("Invalid User or Token");
             }
-            logger.info("User verified: " + verifiedTokenUser);
             ctx.attribute("user", verifiedTokenUser);
         };
     }
 
+    // Tjekker om brugerens roller matcher de tilladte roller
     @Override
-    // Check if the user's roles contain any of the allowed roles
     public boolean authorize(UserDTO user, Set<RouteRole> allowedRoles) {
         if (user == null) {
             throw new UnauthorizedResponse("You need to log in, dude!");
         }
         Set<String> roleNames = allowedRoles.stream()
-                   .map(RouteRole::toString)  // Convert RouteRoles to  Set of Strings
-                   .collect(Collectors.toSet());
+                .map(RouteRole::toString)
+                .collect(Collectors.toSet());
         return user.getRoles().stream()
-                   .map(String::toUpperCase)
-                   .anyMatch(roleNames::contains);
-        }
+                .map(String::toUpperCase)
+                .anyMatch(roleNames::contains);
+    }
 
+    // Opretter en JWT token for en bruger baseret på miljøvariabler
     @Override
     public String createToken(UserDTO user) {
         try {
             String ISSUER;
             String TOKEN_EXPIRE_TIME;
             String SECRET_KEY;
-
             if (System.getenv("DEPLOYED") != null) {
                 ISSUER = System.getenv("ISSUER");
                 TOKEN_EXPIRE_TIME = System.getenv("TOKEN_EXPIRE_TIME");
@@ -154,11 +150,12 @@ public class SecurityController implements ISecurityController {
         }
     }
 
+
+    // Verificerer en JWT token og returnerer den tilknyttede bruger hvis token er gyldig
     @Override
     public UserDTO verifyToken(String token) {
         boolean IS_DEPLOYED = (System.getenv("DEPLOYED") != null);
         String SECRET = IS_DEPLOYED ? System.getenv("SECRET_KEY") : Utils.getPropertyValue("SECRET_KEY", "config.properties");
-
         try {
             if (tokenSecurity.tokenIsValid(token, SECRET) && tokenSecurity.tokenNotExpired(token)) {
                 return tokenSecurity.getUserWithRolesFromToken(token);
@@ -171,26 +168,24 @@ public class SecurityController implements ISecurityController {
         }
     }
 
+
+    // Tilføjer en rolle til en bruger og returnerer en bekræftelsesbesked
     public @NotNull Handler addRole() {
         return (ctx) -> {
             ObjectNode returnObject = objectMapper.createObjectNode();
             try {
-                // get the role from the body. the json is {"role": "manager"}.
-                // We need to get the role from the body and the username from the token
                 String newRole = ctx.bodyAsClass(ObjectNode.class).get("role").asText();
                 UserDTO user = ctx.attribute("user");
                 User updatedUser = securityDAO.addRole(user, newRole);
                 ctx.status(200).json(returnObject.put("msg", "Role " + newRole + " added to user"));
             } catch (EntityNotFoundException e) {
                 ctx.status(404).json("{\"msg\": \"User not found\"}");
-
-
-                
             }
         };
     }
 
-    // Health check for the API. Used in deployment
+
+    // API der returnerer en status på 200 når API'et kører bruges for deployment
     public void healthCheck(@NotNull Context ctx) {
         ctx.status(200).json("{\"msg\": \"API is up and running\"}");
     }
