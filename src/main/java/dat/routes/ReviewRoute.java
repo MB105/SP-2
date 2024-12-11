@@ -14,7 +14,7 @@ public class ReviewRoute {
 
         return () -> {
             post("/", reviewController::create, Role.USER);
-            get("/", reviewController::readAll, Role.USER, Role.ADMIN);
+            get("/", reviewController::readAll, Role.ANYONE);
             get("/{id}", reviewController::read, Role.USER, Role.ADMIN);
             delete("/{id}", reviewController::delete, Role.ADMIN);
         };
