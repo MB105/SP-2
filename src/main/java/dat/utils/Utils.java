@@ -63,6 +63,6 @@ public class Utils {
         } catch (Exception e) {
             // Returnerer en fejlmeddelelse hvis konverteringen fejler
             return "{\"error\": \"Kunne ikke konvertere besked til JSON\"}";
-        
+        }
     }
 }
