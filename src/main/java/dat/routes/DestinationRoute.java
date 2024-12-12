@@ -14,7 +14,7 @@ public class DestinationRoute {
 
         return () -> {
             post("/", destinationController::create, Role.ADMIN);
-            get("/", destinationController::readAll, Role.USER, Role.ADMIN);
+            get("/", destinationController::readAll, Role.ANYONE);
             get("/{id}", destinationController::read, Role.USER, Role.ADMIN);
             put("/{id}", destinationController::update, Role.ADMIN);
             delete("/{id}", destinationController::delete, Role.ADMIN);
