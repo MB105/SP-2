@@ -13,7 +13,7 @@ public class ReviewRoute {
     protected EndpointGroup getRoutes() {
 
         return () -> {
-            post("/", reviewController::create, Role.USER);
+            post("/", reviewController::create, Role. USER, Role.ADMIN);
             get("/", reviewController::readAll, Role.ANYONE);
             get("/{id}", reviewController::read, Role.USER, Role.ADMIN);
             delete("/{id}", reviewController::delete, Role.ADMIN);
