@@ -13,7 +13,7 @@ public class BookingRoute {
     protected EndpointGroup getRoutes() {
 
         return () -> {
-            post("/", bookingController::create, Role.USER);
+            post("/", bookingController::create, Role.ANYONE);
             get("/", bookingController::readAll, Role.ANYONE);
             get("/{id}", bookingController::read, Role.USER, Role.ADMIN);
             put("/{id}", bookingController::update, Role.ADMIN);
